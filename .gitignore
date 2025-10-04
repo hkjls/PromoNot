@@ -1,0 +1,17 @@
+#Python / Django
+__pycache__
+*.pyc
+db.sqlite3
+.env
+.venv/
+venv/
+*.egg-info/
+
+#Node.js / Frontend
+node_modules/
+dist/
+.DS_Store
+npm-debug.log*
+yarn-error.log
+yarn-debug.log*
+package-lock.json

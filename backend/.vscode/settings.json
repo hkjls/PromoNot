@@ -1,0 +1,13 @@
+// Dans le fichier /backend/.vscode/settings.json
+{
+    // Indique à VS Code d'utiliser Black comme formateur pour les fichiers Python
+    "python.formatting.provider": "black",
+    // Active le formatage à chaque fois que vous sauvegardez un fichier
+    "editor.formatOnSave": true,
+    // Active le linter Ruff et les "quick fixes" (corrections rapides)
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+    // Permet à Ruff de fonctionner en harmonie avec le formateur
+    "ruff.organizeImports": false
+}
