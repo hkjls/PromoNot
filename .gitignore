@@ -6,6 +6,7 @@ db.sqlite3
 .venv/
 venv/
 *.egg-info/
+ClientSecretCode.json
 
 #Node.js / Frontend
 node_modules/

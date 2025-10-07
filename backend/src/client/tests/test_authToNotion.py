@@ -1,12 +1,12 @@
 from django.test import TestCase
 
-from ..authToNotion import AuthToNotion
+from ..requestNotion import Notion
 
 
 class AuthenticationNotionTest(TestCase):
 
     def testConnection(self):
 
-        auth = AuthToNotion()
-        self.assertIsNotNone(auth)
-        print(auth)
+        auth = Notion()
+        self.assertIsNotNone(auth.db_list)
+        print(auth.db_list())
