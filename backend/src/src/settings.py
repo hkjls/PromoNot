@@ -27,7 +27,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
-NOTION_API_KEY = os.environ.get("NOTION_API_KEY")
+# NOTION_API_KEY = os.environ.get("NOTION_API_KEY")
+NOTION_CLIENT_ID = os.getenv("NotionClientID")
+NOTION_CLIENT_SECRET= os.getenv("NotionClientSecret")
+NOTION_AUTH_URI = os.getenv("NotionAuthURI")
 
 ALLOWED_HOSTS = []
 

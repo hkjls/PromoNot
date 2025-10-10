@@ -1,7 +1,7 @@
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { NotionKeyProvider } from './context/notionKeyContext'
-// import Home from './pages/Home'
+import Home from './pages/Home'
 import Authorization from './pages/Authorization'
 
 const App=():ReactElement=>{
@@ -14,6 +14,7 @@ const App=():ReactElement=>{
       <NotionKeyProvider>
         <Routes>
             <Route path="/" element={<Authorization/>} />
+            <Route path="/home" element={<Home/>} />
         </Routes>
       </NotionKeyProvider>
     </Router>
