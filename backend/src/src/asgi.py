@@ -15,17 +15,18 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 from django.urls import re_path
 
-from core.EchoConsumer import EchoConsumer
+from core.EchoConsumer import AsyncEchoConsumer, EchoConsumer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'src.settings')
 django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "wbsocket": AllowedHostsOriginValidator(
+    "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter([
                 re_path(r"ws/echo/$", EchoConsumer.as_asgi()),
+                re_path(r"ws/async_echo/$", AsyncEchoConsumer.as_asgi()),
             ])
         )
     ),
