@@ -1,6 +1,9 @@
 from django.http import HttpRequest, HttpResponse  # noqa: I001
 from django.conf import settings # noqa: I001
 from django.shortcuts import redirect
+from .models import secretKeys
+from utils.encryption import encrypt_token
+
 import base64
 import requests
 
@@ -31,5 +34,23 @@ def listenNotionFallback(request: HttpRequest):
 
     response = requests.post(token_url, json=data, headers=headers)
     access_token = response.json().get('access_token')
+    owner_info = response.json().get('owner')
+    user_info = owner_info.get('user')
+
+    user_id = user_info.get('id')
+    user_name = user_info.get('name')
+    access_token = encrypt_token(access_token)
+
+    # Search the user ID if it don't exists save the secret key
+    try:
+        existing_entry = secretKeys.objects.get(id=user_id)
+        existing_entry.secretKey = access_token
+        existing_entry.user = user_name
+        existing_entry.save()
+    except secretKeys.DoesNotExist:
+        pass
+
+    secretKeyEntry = secretKeys(id=user_id, user=user_name, secretKey=access_token)
+    secretKeyEntry.save()
 
     return redirect('http://localhost:5173/home')

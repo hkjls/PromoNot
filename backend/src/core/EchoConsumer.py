@@ -20,32 +20,19 @@ class EchoConsumer(SyncConsumer):
         self.close_consumer(event)
 
     def close_consumer(self, event):
-        """
-        Properly close the consumer connection.
-        This method handles the closing handshake and cleanup.
-        """
-        close_code = event.get('code', 1000)  # Default normal closure
+        close_code = event.get('code', 1000)
         close_reason = event.get('reason', '')
+        # self.cleanup_resources()
 
-        # Log the closure for debugging
-        print(f"Consumer closing: code={close_code}, reason={close_reason}")
-
-        # Perform any cleanup operations here
-        self.cleanup_resources()
-
-        # Send close message if not already sent
         try:
             self.send({
                 "type": "websocket.close",
                 "code": close_code,
                 "reason": close_reason
             })
-            # Use StopConsumer to properly terminate the consumer
             raise StopConsumer(close_code, close_reason)
         except Exception as e:
-            # Connection might already be closed
             print(f"Error sending close message: {e}")
-            # Still raise StopConsumer for proper termination
             raise StopConsumer(close_code, close_reason)
 
     def cleanup_resources(self):
