@@ -1,22 +1,15 @@
 #Consumer using Generic Consumer
+import json
 
-from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
 
-
-class NotionConsumer(WebsocketConsumer):
-    groups = ["notion"]
-    def connect(self):
-        self.accept()
-
-    def disconnect(self, close_code):
-        pass
-
-    def receive(self, text_data):
-        self.send(text_data=text_data)
+from client.requestNotion import Notion
+from server.models import secretKeys
+from utils.encryption import decrypt_token
 
 
 class AsyncNotionConsumer(AsyncWebsocketConsumer):
-    groups = ["notion"]
     async def connect(self):
         await self.accept()
 
@@ -24,4 +17,36 @@ class AsyncNotionConsumer(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
-        await self.send(text_data=text_data)  # noqa: W292
+        data = json.loads(text_data)
+        action = data.get("action")
+
+        if action == "fetch_tasks":
+            await self.send_notion_request(data)
+
+    async def send_notion_request(self, data):
+        token = await self.get_decryted_token()
+
+        if token:
+            notion_client = Notion(token)
+            db_list = notion_client.db_list()
+            await self.send(text_data=json.dumps({
+                "type": "db_list",
+                "data": db_list
+            }))
+        else:
+            await self.send(text_data=json.dumps({
+                'status': 'error',
+                'message': 'Impossible de récupérer la clé secrète.'
+            }))
+
+    @database_sync_to_async
+    def get_decryted_token(self):
+        try:
+            key_object = secretKeys.objects.first()
+            if key_object:
+                encrypted_key = key_object.secretKey
+                return decrypt_token(encrypted_key)
+            return None
+        except Exception:
+            # Gérer les erreurs potentielles (ex: table vide)
+            return None

@@ -3,6 +3,7 @@ import type { ReactElement } from 'react'
 import { NotionKeyProvider } from './context/notionKeyContext'
 import Home from './pages/Home'
 import Authorization from './pages/Authorization'
+import { WebSocketProvider } from './context/webSocketProvider'
 
 const App=():ReactElement=>{
 
@@ -12,10 +13,12 @@ const App=():ReactElement=>{
         Made by RANDRIANJAFY Joelas
       </div>
       <NotionKeyProvider>
-        <Routes>
-            <Route path="/" element={<Authorization/>} />
-            <Route path="/home" element={<Home/>} />
-        </Routes>
+        <WebSocketProvider url="ws://localhost:3000/ws/notion/">
+          <Routes>
+              <Route path="/" element={<Authorization/>} />
+              <Route path="/home" element={<Home/>} />
+          </Routes>
+        </WebSocketProvider>
       </NotionKeyProvider>
     </Router>
   )
