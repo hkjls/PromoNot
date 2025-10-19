@@ -1,10 +1,10 @@
 from django.http import HttpRequest, HttpResponse  # noqa: I001
 from django.conf import settings # noqa: I001
-from django.shortcuts import redirect
+from utils.encrypt import encrypt_token
 import base64
 import requests
 
-def listenNotionFallback(request: HttpRequest):
+def listenNotionFallback(request: HttpRequest)-> object:
     # Simulate listening to Notion fallback data
     authorization_code = request.GET.get('code')
     # state_value = request.GET.get('state')
@@ -31,5 +31,18 @@ def listenNotionFallback(request: HttpRequest):
 
     response = requests.post(token_url, json=data, headers=headers)
     access_token = response.json().get('access_token')
+    owner_info = response.json().get('owner')
+    user_info = owner_info.get('user')
+    mail = user_info.get('person').get('email')
 
-    return redirect('http://localhost:5173/home')
+    if response.status_code != 200:
+        return {
+            'error':"Problem with the server"
+        }
+
+    return {
+        'id':user_info.get('id'),
+        'user':user_info.get('name'),
+        'secretKey':encrypt_token(access_token),
+        'email':mail
+    }

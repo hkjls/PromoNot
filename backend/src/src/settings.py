@@ -31,6 +31,10 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 NOTION_CLIENT_ID = os.getenv("NotionClientID")
 NOTION_CLIENT_SECRET= os.getenv("NotionClientSecret")
 NOTION_AUTH_URI = os.getenv("NotionAuthURI")
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY")
+
+if not ENCRYPTION_KEY:
+    raise ValueError("ENCRYPTION KEY is not set in environment variables")
 
 ALLOWED_HOSTS = []
 
@@ -127,6 +131,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = os.path.join(BASE_DIR, "static_root/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

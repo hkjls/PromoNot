@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 
-import { NotionKeyProvider, useNotionKey } from './notionKeyContext';
+import { NotionKeyProvider, useNotionKey } from './notionKeyProvider';
 
 vi.stubGlobal('import', {
     meta:{

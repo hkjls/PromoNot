@@ -1,6 +1,5 @@
 import type { ReactElement } from "react";
-// import { useState} from 'react';
-import { useNotionKey } from "../context/notionKeyContext";
+import { useNotionKey } from "../context/useNotionKey";
 
 const Authorization = (): ReactElement => {
     const {authUrl} = useNotionKey();

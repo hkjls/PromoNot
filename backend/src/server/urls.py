@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .notionFallBack import listenNotionFallback
+from .views import homePage
 
 urlpatterns = [
-    path('auth/notion/callback/', listenNotionFallback, name='notion_callback'),
+    path('auth/notion/callback/', homePage, name='home_page'),
 ]

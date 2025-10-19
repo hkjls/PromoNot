@@ -2,7 +2,7 @@ import React from 'react';
 import type { ReactElement} from 'react';
 import { render} from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
-import { NotionKeyProvider } from '../context/notionKeyContext';
+import { NotionKeyProvider } from '../context/notionKeyProvider';
 
 // eslint-disable-next-line react-refresh/only-export-components
 const AllTheProviders = ({ children }: { children: React.ReactNode }):ReactElement => {
