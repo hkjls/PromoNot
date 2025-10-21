@@ -6,8 +6,8 @@ set -o errexit
 # Il n'est donc plus nécessaire de faire "pip install" ici.
 
 # Commandes pour Django
-python manage.py collectstatic --no-input
-python manage.py migrate
+poetry run python manage.py collectstatic --no-input
+poetry python manage.py migrate
 
 # N'oubliez pas de rendre ce script exécutable :
 # bash
