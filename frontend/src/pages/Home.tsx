@@ -22,5 +22,4 @@ const Home=():ReactElement=>{
     </div>
   )
 }
-
 export default Home;
