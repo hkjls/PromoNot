@@ -7,7 +7,7 @@ set -o errexit
 
 # Commandes pour Django
 poetry run python manage.py collectstatic --no-input
-poetry python manage.py migrate
+poetry run python manage.py migrate
 
 # N'oubliez pas de rendre ce script exécutable :
 # bash
