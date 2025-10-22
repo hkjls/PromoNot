@@ -3,6 +3,7 @@ from django.conf import settings # noqa: I001
 from utils.encrypt import encrypt_token
 import base64
 import requests
+import os
 
 def listenNotionFallback(request: HttpRequest)-> object:
     # Simulate listening to Notion fallback data
@@ -17,7 +18,7 @@ def listenNotionFallback(request: HttpRequest)-> object:
     base64_bytes = base64.b64encode(credentials_bytes)
     base64_string = base64_bytes.decode('utf-8')
 
-    token_url = "https://api.notion.com/v1/oauth/token"
+    token_url = os.getenv("TOKEN_URL")
     headers = {
         'Authorization': f'Basic {base64_string}',
         'Content-Type': 'application/json',
@@ -26,7 +27,7 @@ def listenNotionFallback(request: HttpRequest)-> object:
     data = {
         'grant_type': 'authorization_code',
         'code': authorization_code,
-        'redirect_uri': settings.NOTION_AUTH_URI, # L'URL de callback que vous avez configurée
+        'redirect_uri': settings.NOTION_AUTH_URI, # L'URL de callback que vous avez con
     }
 
     response = requests.post(token_url, json=data, headers=headers)

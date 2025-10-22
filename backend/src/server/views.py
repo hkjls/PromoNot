@@ -1,3 +1,4 @@
+import os
 import urllib.parse
 
 from django.shortcuts import redirect
@@ -19,7 +20,7 @@ def homePage(request):
         )
 
         params = urllib.parse.urlencode({'userId': db_id})
-        homePage = 'http://localhost:5173/home'
+        homePage = os.getenv("REACT_HOME_PAGE")
 
         if created:
             print('new user created')

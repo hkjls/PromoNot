@@ -12,7 +12,7 @@ const App=():ReactElement=>{
       <div className='Signature Contact'>
         Made by RANDRIANJAFY Joelas
       </div>
-      <WebSocketProvider url = "ws://localhost:3000/ws/notion/">
+      <WebSocketProvider url = {import.meta.env.REACT_APP_API_URL}>
         
         <NotionKeyProvider>
           <Routes>

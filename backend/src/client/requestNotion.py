@@ -1,3 +1,5 @@
+import os
+
 import requests
 
 
@@ -9,11 +11,11 @@ class Notion:
         self.headers = {
             "Authorization": "Bearer " + notion_token,
             "Content-Type": "application/json",
-            "Notion-Version": "2022-06-28",  # Utilise la dernière version stable de l'API
+            "Notion-Version": "2022-06-28",
         }
 
         self.urls = {
-            'search_endpoint': 'https://api.notion.com/v1/search',
+            'search_endpoint': os.getenv("NOTION_SEARCH_ENDPOINT"),
         }
 
         self.payload = {
