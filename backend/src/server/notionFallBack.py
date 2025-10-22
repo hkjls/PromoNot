@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponse  # noqa: I001
+from django.http import HttpRequest, HttpResponse, JsonResponse  # noqa: I001
 from django.conf import settings # noqa: I001
 from utils.encrypt import encrypt_token
 import base64
@@ -31,8 +31,25 @@ def listenNotionFallback(request: HttpRequest)-> object:
     }
 
     response = requests.post(token_url, json=data, headers=headers)
+
+    if response.status_code != 200:
+        # Si la requête a échoué, on affiche la raison dans les logs de Render
+        print("--- ERREUR NOTION API ---")
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Body: {response.text}")
+        print("-------------------------")
+        # Et on renvoie une erreur claire
+        return JsonResponse({'error': 'Failed to authenticate with Notion'}, status=500)
+
     access_token = response.json().get('access_token')
     owner_info = response.json().get('owner')
+
+    if not owner_info or 'user' not in owner_info:
+        print("--- ERREUR DE STRUCTURE DE DONNÉES NOTION ---")
+        print(f"La clé 'owner' ou 'user' est manquante dans la réponse: {response.json()}")  # noqa: E501
+        print("------------------------------------------")
+        return JsonResponse({'error': 'Invalid data structure from Notion'}, status=500)
+
     user_info = owner_info.get('user')
     mail = user_info.get('person').get('email')
 
