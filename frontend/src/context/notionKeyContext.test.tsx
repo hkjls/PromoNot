@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 
-import { NotionKeyProvider, useNotionKey } from './notionKeyProvider';
+import { NotionKeyProvider } from './notionKeyProvider';
+import { useNotionKey } from './useNotionKey';
 
 vi.stubGlobal('import', {
     meta:{
@@ -47,12 +48,8 @@ describe('NotionKeyProvider', ()=>{
 
     screen.debug();
 
-    const clientIdValue = 'my_client_id_secret';
-    const clientSecretValue = 'my_client_secret_value';
-    const authUrlValue = 'https://example.com/auth';
-
-    expect(screen.getByText(`Client ID: ${clientIdValue}`)).toBeInTheDocument();
-    expect(screen.getByText(`Client Secret: ${clientSecretValue}`)).toBeInTheDocument();
-    expect(screen.getByText(`Auth URL: ${authUrlValue}`)).toBeInTheDocument();
+    expect(screen.getByText(`Client ID: ${import.meta.env.VITE_CLIENT_ID}`)).toBeInTheDocument();
+    expect(screen.getByText(`Client Secret: ${import.meta.env.VITE_CLIENT_SECRET}`)).toBeInTheDocument();
+    expect(screen.getByText(`Auth URL: ${import.meta.env.VITE_AUTH_URL}`)).toBeInTheDocument();
     });
 })

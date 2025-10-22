@@ -11,6 +11,7 @@ const Home=():ReactElement=>{
 
   const handleSendMessage=()=>{
     sendMessage(JSON.stringify({action: "fetch_tasks", user_id:parms}))
+    setParms(parms)
   }
   return (
     <div>
