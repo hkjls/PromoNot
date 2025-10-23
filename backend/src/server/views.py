@@ -30,3 +30,6 @@ def homePage(request):
         raise ValueError(e)
 
     return redirect(f'{homePage}?{params}')
+
+def webHook(request):
+    return
