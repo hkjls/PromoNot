@@ -1,7 +1,10 @@
+import json
 import os
 import urllib.parse
 
+from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import secretKeys
 from .notionFallBack import listenNotionFallback
@@ -31,5 +34,22 @@ def homePage(request):
 
     return redirect(f'{homePage}?{params}')
 
+@csrf_exempt
 def webHook(request):
-    return
+    if request.method == 'POST':
+        signature_notion = request.headers.get('X-Notion-Signature')
+        secret_notion = os.environ.get('NOTION_WEBHOOK_SECRET')
+
+        if signature_notion != secret_notion:
+            return JsonResponse({'error':'Signature invalide'}, status=403)
+
+        try:
+            data = json.loads(request.body)
+
+            print("webhook authenticated")
+            print(data)
+
+            return JsonResponse({'Status':'ok'}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({'error':'JSON malforme'}, status=400)
+    return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
