@@ -36,20 +36,27 @@ def homePage(request):
 
 @csrf_exempt
 def webHook(request):
-    if request.method == 'POST':
-        signature_notion = request.headers.get('X-Notion-Signature')
-        secret_notion = os.environ.get('NOTION_WEBHOOK_SECRET')
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
 
-        if signature_notion != secret_notion:
-            return JsonResponse({'error':'Signature invalide'}, status=403)
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON malformé'}, status=400)
 
-        try:
-            data = json.loads(request.body)
+    if 'challenge' in data:
+        challenge_token = data.get('challenge')
+        print(f"Vérification du webhook reçue. Challenge : {challenge_token}")
+        return JsonResponse({'challenge': challenge_token})
 
-            print("webhook authenticated")
-            print(data)
+    signature_recue = request.headers.get('X-Notion-Signature')
+    secret_attendu = os.environ.get('NOTION_WEBHOOK_SECRET')
 
-            return JsonResponse({'Status':'ok'}, status=200)
-        except json.JSONDecodeError:
-            return JsonResponse({'error':'JSON malforme'}, status=400)
-    return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+    if not secret_attendu or signature_recue != secret_attendu:
+        print("Erreur de signature : la signature reçue ne correspond pas.")
+        return JsonResponse({'error': 'Signature invalide'}, status=403)
+
+    print("Webhook authentifié reçu de Notion :")
+    print(data)
+
+    return JsonResponse({'status': 'ok'}, status=200)
