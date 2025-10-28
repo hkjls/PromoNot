@@ -45,7 +45,7 @@ def webHook(request):
         return JsonResponse({'error': 'JSON malformé'}, status=400)
 
     if 'verification_token' in data:
-        verification_token = data.get('challenge')
+        verification_token = data.get('verification_token')
 
         try:
             # ÉTAPE 2: On cherche l'entrée pour "Notion", ou on la crée si elle n'existe pas.
