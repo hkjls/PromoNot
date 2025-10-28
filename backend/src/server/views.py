@@ -48,12 +48,11 @@ def webHook(request):
         verification_token = data.get('verification_token')
 
         try:
-            # ÉTAPE 2: On cherche l'entrée pour "Notion", ou on la crée si elle n'existe pas.
+
             integration, created = WebhookIntegration.objects.get_or_create(
                 app_name='Notion'
             )
 
-            # ÉTAPE 3: On sauvegarde le token dans la base de données.
             integration.verification_token = verification_token
             integration.save()
 

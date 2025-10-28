@@ -17,7 +17,7 @@ class Meta:
 
 class WebhookIntegration(models.Model):
     app_name = models.CharField(max_length=100, help_text="Le nom de l'application")
-    verifciation_token = models.CharField(max_length=255, blank=True, null=True,
+    verification_token = models.CharField(max_length=255, blank=True, null=True,
                                           help_text='Le token de verification recu')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
