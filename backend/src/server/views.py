@@ -44,7 +44,7 @@ def webHook(request):
     except json.JSONDecodeError:
         return JsonResponse({'error': 'JSON malformé'}, status=400)
 
-    if 'challenge' in data:
+    if 'verification_token' in data:
         challenge_token = data.get('challenge')
         print(f"Vérification du webhook reçue. Challenge : {challenge_token}")
         return JsonResponse({'challenge': challenge_token})
