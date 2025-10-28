@@ -13,3 +13,18 @@ class Meta:
     verbose_name = 'Secret Key'
     verbose_name_plural = 'Secret Key'
     ordering = ['user']
+
+
+class WebhookIntegration(models.Model):
+    app_name = models.CharField(max_length=100, help_text="Le nom de l'application")
+    verifciation_token = models.CharField(max_length=255, blank=True, null=True,
+                                          help_text='Le token de verification recu')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.app_name
+
+    class Meta:
+        verbose_name = "Integration Webhook"
+        verbose_name_plural = "Integration Webhook"

@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import secretKeys
+from .models import WebhookIntegration, secretKeys
 from .notionFallBack import listenNotionFallback
 
 
@@ -45,9 +45,22 @@ def webHook(request):
         return JsonResponse({'error': 'JSON malformé'}, status=400)
 
     if 'verification_token' in data:
-        challenge_token = data.get('challenge')
-        print(f"Vérification du webhook reçue. Challenge : {challenge_token}")
-        return JsonResponse({'challenge': challenge_token})
+        verification_token = data.get('challenge')
+
+        try:
+            # ÉTAPE 2: On cherche l'entrée pour "Notion", ou on la crée si elle n'existe pas.
+            integration, created = WebhookIntegration.objects.get_or_create(
+                app_name='Notion'
+            )
+
+            # ÉTAPE 3: On sauvegarde le token dans la base de données.
+            integration.verification_token = verification_token
+            integration.save()
+
+            return JsonResponse({'verification_token':verification_token})
+
+        except Exception as e:
+            return JsonResponse({'error': e}, status=500)
 
     signature_recue = request.headers.get('X-Notion-Signature')
     secret_attendu = os.environ.get('NOTION_WEBHOOK_SECRET')
@@ -55,8 +68,5 @@ def webHook(request):
     if not secret_attendu or signature_recue != secret_attendu:
         print("Erreur de signature : la signature reçue ne correspond pas.")
         return JsonResponse({'error': 'Signature invalide'}, status=403)
-
-    print("Webhook authentifié reçu de Notion :")
-    print(data)
 
     return JsonResponse({'status': 'ok'}, status=200)
