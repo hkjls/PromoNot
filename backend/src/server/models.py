@@ -7,6 +7,8 @@ class secretKeys(models.Model):
     user = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, null=True)
     secretKey = models.CharField(max_length=255)
+    notion_bot_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    notion_workspace_id = models.CharField(max_length=255, null=True, blank=True)
 
 class Meta:
     db_table = 'secretKey'

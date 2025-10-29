@@ -22,6 +22,7 @@ dj-database-url = "^3.0.1"
 psycopg2-binary = "^2.9.11"
 whitenoise = "^6.11.0"
 django-cors-headers = "^4.9.0"
+channels-redis = "^4.3.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.13.3"
