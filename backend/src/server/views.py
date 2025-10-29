@@ -14,7 +14,7 @@ from .notionFallBack import listenNotionFallback
 def homePage(request):
     response = listenNotionFallback(request)
     try:
-        db_id = response.pop('id')
+        db_id = response['id']
         defaults_data = response
 
         obj, created = secretKeys.objects.update_or_create(
