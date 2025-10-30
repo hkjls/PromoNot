@@ -22,7 +22,11 @@ def homePage(request):
             defaults=defaults_data
         )
 
-        params = urllib.parse.urlencode({'userId': db_id})
+        params = urllib.parse.urlencode({
+            'userId': db_id,
+            'botId': response['notion_bot_id'],
+            'workspaceId':response['notion_workspace_id']
+        })
         homePage = os.getenv("REACT_HOME_PAGE")
 
         if created:
