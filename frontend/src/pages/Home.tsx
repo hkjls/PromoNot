@@ -10,12 +10,19 @@ const Home=():ReactElement=>{
   const {connectionStatus, lastMessage, sendMessage, add_url} = useWebSocket()
 
   useEffect(()=>{
-    add_url(import.meta.env.VITE_WEBSOCKET_URL)
-  })
+    if(parms){
+      const baseUrl = import.meta.env.VITE_WEBSOCKET_URL
+      const websocketUrl = `${baseUrl}/${parms}/`
+
+      add_url(websocketUrl)
+    }
+  }, [parms, add_url])
 
   const handleSendMessage=()=>{
-    sendMessage(JSON.stringify({action: "fetch_tasks", user_id:parms}))
-    setParms(parms)
+    if(parms){
+      sendMessage(JSON.stringify({action: "fetch_tasks", user_id:parms}))
+      setParms(parms)
+    }
   }
   return (
     <div>

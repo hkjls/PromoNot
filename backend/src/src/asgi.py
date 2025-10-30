@@ -26,7 +26,9 @@ application = ProtocolTypeRouter({
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter([
-                re_path(r"^ws/notion/?$", AsyncNotionConsumer.as_asgi())
+                re_path(r"^ws/notion/(?P<user_id>[\w-]+)/?$",
+                        AsyncNotionConsumer.as_asgi()
+                    )
             ])
         )
     )

@@ -10,10 +10,21 @@ from utils.encrypt import decrypt_token
 
 class AsyncNotionConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        self.user_id = self.scope['url_route']['kwargs']['user_id']
+        self.room_group_name = f'notion_updates_{self.user_id}'
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
         await self.accept()
 
     async def disconnect(self, close_data):
-        pass
+        if hasattr(self, 'room_group_name'):
+            await self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+            )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -21,6 +32,14 @@ class AsyncNotionConsumer(AsyncWebsocketConsumer):
 
         if action == "fetch_tasks":
             await self.notion_requestf(data)
+
+    async def notion_update_event(self, event):
+        message_data = event['data']
+
+        await self.send(text_data=json.dumps({
+            'type':'notion_update',
+            'payload':message_data
+        }))
 
     async def notion_requestf(self, data):
 
