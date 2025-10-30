@@ -12,7 +12,7 @@ const Home=():ReactElement=>{
   useEffect(()=>{
     if(parms){
       const baseUrl = import.meta.env.VITE_WEBSOCKET_URL
-      const websocketUrl = `${baseUrl}/${parms}/`
+      const websocketUrl = `${baseUrl}${parms}/`
 
       add_url(websocketUrl)
     }
