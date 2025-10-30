@@ -12,7 +12,7 @@ const App=():ReactElement=>{
       <div className='Signature Contact'>
         Made by RANDRIANJAFY Joelas
       </div>
-      <WebSocketProvider url = {import.meta.env.VITE_WEBSOCKET_URL}>
+      <WebSocketProvider>
         
         <NotionKeyProvider>
           <Routes>
@@ -20,7 +20,6 @@ const App=():ReactElement=>{
               <Route path="/home" element={<Home/>} />
           </Routes>
         </NotionKeyProvider>
-
       </WebSocketProvider>
     </Router>
   )

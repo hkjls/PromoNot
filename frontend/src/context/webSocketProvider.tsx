@@ -3,41 +3,39 @@ import type { ReactNode } from "react";
 import type { IwebSocketContext } from './webSocketContext';
 import { webSocketContext } from './webSocketContext';
 
-interface WebSocketProviderProps {
-    url: string;
-    children: ReactNode;
-}
-
-export const WebSocketProvider = ({url, children}: WebSocketProviderProps)=>{
+export const WebSocketProvider = ({children}: {children: ReactNode})=>{
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<IwebSocketContext['connectionStatus']>('connecting');
     const [lastMessage, setLastMessage] = useState<MessageEvent | null>(null);
+    const [url, setURL] = useState<string | null>(null);
 
     useEffect(()=>{
-        const newSocket = new WebSocket(url);
-        setConnectionStatus('connecting')
+        if(url){
+            const newSocket = new WebSocket(url);
+            setConnectionStatus('connecting')
 
-        newSocket.onopen = () =>{
-            setConnectionStatus('open')
-        }
+            newSocket.onopen = () =>{
+                setConnectionStatus('open')
+            }
 
-        newSocket.onmessage = (event) =>{
-            setLastMessage(event);
+            newSocket.onmessage = (event) =>{
+                setLastMessage(event);
 
-        }
+            }
 
-        newSocket.onclose = ()=>{
-            setConnectionStatus('closed');
-        }
+            newSocket.onclose = ()=>{
+                setConnectionStatus('closed');
+            }
 
-        newSocket.onerror = () =>{
-            setConnectionStatus('closed')
-        }
+            newSocket.onerror = () =>{
+                setConnectionStatus('closed')
+            }
 
-        setSocket(newSocket)
+            setSocket(newSocket)
 
-        return () => {
-            newSocket.close();
+            return () => {
+                newSocket.close();
+            }
         }
 
     }, [url])
@@ -49,11 +47,17 @@ export const WebSocketProvider = ({url, children}: WebSocketProviderProps)=>{
         }
     }, [socket, connectionStatus]);
     
+    const add_url = (ws_url:string)=>{
+        setURL(ws_url)
+    }
+
     const contextValue: IwebSocketContext = {
         connectionStatus,
         lastMessage,
-        sendMessage
+        sendMessage,
+        add_url
     }
+
 
     return (
         <webSocketContext.Provider value={contextValue}>
