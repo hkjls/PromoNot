@@ -31,7 +31,7 @@ describe('WebSocketProvider', ()=>{
         };
 
         render(
-            <WebSocketProvider url="wss://example.com/socket">
+            <WebSocketProvider>
                 <TestComponent />
             </WebSocketProvider>
         );
