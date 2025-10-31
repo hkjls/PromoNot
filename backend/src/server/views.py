@@ -2,6 +2,8 @@ import json
 import os
 import urllib.parse
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -71,5 +73,30 @@ def webHook(request):
     if not secret_attendu or signature_recue != secret_attendu:
         print("Erreur de signature : la signature reçue ne correspond pas.")
         return JsonResponse({'error': 'Signature invalide'}, status=403)
+
+    bot_id = None
+    if 'accessible_by' in data:
+        bot_obj = filter(lambda x:x['type']=='bot', data['accessible_by'])
+        bot_id = bot_obj['id']
+
+    if not bot_id:
+        return JsonResponse({'status':'ok, no bot_id'}, status=200)
+
+    try:
+        secret_key_entry = secretKeys.objects.get(notion_bot_id=bot_id)
+        user_notion_id = secret_key_entry.id
+    except secretKeys.DoesNotExist:
+        return JsonResponse({'status':'ok, user not found'}, status=200)
+
+    channel_layer = get_channel_layer()
+    group_name = f'notion_updates_{user_notion_id}'
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type':'notion_update_event',
+            'data':data
+        }
+    )
 
     return JsonResponse({'status': 'ok'}, status=200)
