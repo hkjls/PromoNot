@@ -85,7 +85,7 @@ def webHook(request):
         return JsonResponse({'error':'Configuration manquante'}, status=500)
 
     digest = hmac.new(
-        key=secret_verification,
+        key=secret_verification.encode('utf-8'),
         msg=request_body_bytes,
         digestmod=hashlib.sha256
     ).hexdigest()
