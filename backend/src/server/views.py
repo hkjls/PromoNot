@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import json
 import os
 import urllib.parse
@@ -44,6 +46,7 @@ def homePage(request):
 def webHook(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+    request_body_bytes = request.body
 
     try:
         data = json.loads(request.body)
@@ -68,11 +71,29 @@ def webHook(request):
             return JsonResponse({'error': e}, status=500)
 
     signature_recue = request.headers.get('X-Notion-Signature')
-    secret_attendu = os.environ.get('NOTION_WEBHOOK_SECRET')
+    # secret_attendu = os.environ.get('NOTION_WEBHOOK_SECRET')
 
-    if not secret_attendu or signature_recue != secret_attendu:
-        print("Erreur de signature : la signature reçue ne correspond pas.")
-        return JsonResponse({'error': 'Signature invalide'}, status=403)
+    if not signature_recue:
+        return JsonResponse({'error': 'Signature manquant'}, status=403)
+
+    try:
+        notion_integration = WebhookIntegration.objects.get(app_name='Notion')
+        secret_verification = notion_integration.verification_token
+        if not secret_verification:
+            raise WebhookIntegration.DoesNotExist
+    except WebhookIntegration.DoesNotExist:
+        return JsonResponse({'error':'Configuration manquante'}, status=500)
+
+    digest = hmac.new(
+        key=secret_verification,
+        msg=request_body_bytes,
+        digestmod=hashlib.sha256
+    ).hexdigest()
+
+    signature_sha=f"sha256={digest}"
+
+    if not hmac.compare_digest(signature_recue, signature_sha):
+        return JsonResponse({'error':'Signature Invalide'}, status=403)
 
     bot_id = None
     if 'accessible_by' in data:
