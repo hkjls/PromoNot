@@ -97,7 +97,7 @@ def webHook(request):
 
     bot_id = None
     if 'accessible_by' in data:
-        bot_obj = filter(lambda x:x['type']=='bot', data['accessible_by'])
+        bot_obj = list(filter(lambda x:x['type']=='bot', data['accessible_by']))
         bot_id = bot_obj['id']
 
     if not bot_id:
